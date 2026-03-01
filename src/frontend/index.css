@@ -1,0 +1,166 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Noto Sans Devanagari - system font stack fallback */
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;500;600;700&display=swap');
+
+/* Fraunces for decorative display use */
+@font-face {
+  font-family: "Fraunces";
+  src: url("/assets/fonts/Fraunces.woff2") format("woff2");
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Cabinet Grotesk";
+  src: url("/assets/fonts/CabinetGrotesk.woff2") format("woff2");
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@layer base {
+  :root {
+    --radius: 0.625rem;
+
+    /* Marwadi OS Design Tokens - Rajasthani Palette */
+    /* Saffron orange: oklch(0.72 0.19 44) = #FF6B2B area */
+    /* Deep pink: oklch(0.58 0.26 345) = #E91E8C area */
+    /* Royal blue: oklch(0.32 0.14 258) = #1A3A8F area */
+    /* Gold: oklch(0.82 0.18 82) = #FFB800 area */
+    /* Ivory/cream background */
+
+    --background: 0.97 0.02 75;
+    --foreground: 0.18 0.04 260;
+    --card: 1 0 0;
+    --card-foreground: 0.18 0.04 260;
+    --popover: 1 0 0;
+    --popover-foreground: 0.18 0.04 260;
+    --primary: 0.72 0.19 44;
+    --primary-foreground: 1 0 0;
+    --secondary: 0.58 0.26 345;
+    --secondary-foreground: 1 0 0;
+    --muted: 0.92 0.03 75;
+    --muted-foreground: 0.48 0.04 260;
+    --accent: 0.82 0.18 82;
+    --accent-foreground: 0.18 0.04 260;
+    --destructive: 0.55 0.22 24;
+    --destructive-foreground: 1 0 0;
+    --border: 0.88 0.04 75;
+    --input: 0.88 0.04 75;
+    --ring: 0.72 0.19 44;
+
+    /* App-specific tokens */
+    --saffron: 0.72 0.19 44;
+    --deep-pink: 0.58 0.26 345;
+    --royal-blue: 0.32 0.14 258;
+    --gold: 0.82 0.18 82;
+    --maroon: 0.45 0.2 22;
+    --emerald: 0.62 0.18 150;
+
+    --chart-1: 0.72 0.19 44;
+    --chart-2: 0.58 0.26 345;
+    --chart-3: 0.32 0.14 258;
+    --chart-4: 0.82 0.18 82;
+    --chart-5: 0.62 0.18 150;
+
+    --sidebar: 0.97 0.02 75;
+    --sidebar-foreground: 0.18 0.04 260;
+    --sidebar-primary: 0.72 0.19 44;
+    --sidebar-primary-foreground: 1 0 0;
+    --sidebar-accent: 0.92 0.03 75;
+    --sidebar-accent-foreground: 0.18 0.04 260;
+    --sidebar-border: 0.88 0.04 75;
+    --sidebar-ring: 0.72 0.19 44;
+  }
+
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    font-family: "Cabinet Grotesk", "Noto Sans Devanagari", "Noto Sans", sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+}
+
+/* Phone frame glow effect */
+.phone-frame-glow {
+  box-shadow:
+    0 0 0 1px rgba(255, 107, 43, 0.3),
+    0 20px 60px rgba(255, 107, 43, 0.2),
+    0 40px 100px rgba(233, 30, 140, 0.15),
+    0 0 80px rgba(26, 58, 143, 0.1),
+    inset 0 0 0 2px rgba(255, 255, 255, 0.1);
+}
+
+/* App icon pulse on tap */
+.app-icon-tap {
+  transition: transform 0.1s ease, filter 0.1s ease;
+}
+.app-icon-tap:active {
+  transform: scale(0.9);
+  filter: brightness(1.2);
+}
+
+/* Devanagari text rendering */
+.devanagari {
+  font-family: "Noto Sans Devanagari", "Noto Sans", system-ui, sans-serif;
+  font-feature-settings: "liga" 1, "kern" 1;
+}
+
+/* Slide up animation for unlock */
+@keyframes slideUp {
+  from { transform: translateY(20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes pulse-gold {
+  0%, 100% { box-shadow: 0 0 8px oklch(0.82 0.18 82 / 0.4); }
+  50% { box-shadow: 0 0 20px oklch(0.82 0.18 82 / 0.8), 0 0 40px oklch(0.72 0.19 44 / 0.3); }
+}
+
+.animate-slide-up {
+  animation: slideUp 0.5s ease forwards;
+}
+
+.animate-pulse-gold {
+  animation: pulse-gold 2s ease-in-out infinite;
+}
+
+/* Glassmorphism for status bar and dock */
+.glass {
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.glass-dark {
+  background: rgba(0, 0, 0, 0.35);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Scrollbar hidden for phone screen */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Mandala decorative pattern overlay */
+.mandala-overlay {
+  background-image: radial-gradient(
+    circle at 50% 50%,
+    oklch(0.82 0.18 82 / 0.05) 0%,
+    transparent 70%
+  );
+}
