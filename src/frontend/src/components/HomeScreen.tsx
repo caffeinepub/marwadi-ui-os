@@ -1,4 +1,4 @@
-import { motion } from "motion/react";
+import { AnimatePresence, motion } from "motion/react";
 import { useEffect, useState } from "react";
 import type { App } from "../backend.d";
 import { DOCK_APP_IDS } from "../data/apps";
@@ -12,6 +12,7 @@ interface HomeScreenProps {
 
 export function HomeScreen({ apps, onAppOpen }: HomeScreenProps) {
   const [now, setNow] = useState(new Date());
+  const [planExpanded, setPlanExpanded] = useState(false);
 
   useEffect(() => {
     const timer = setInterval(() => setNow(new Date()), 1000);
@@ -80,6 +81,69 @@ export function HomeScreen({ apps, onAppOpen }: HomeScreenProps) {
           >
             MARWADI UI OS
           </span>
+        </div>
+      </motion.div>
+
+      {/* Project Plan Banner */}
+      <motion.div
+        className="relative z-10 mx-3 mb-2 cursor-pointer"
+        initial={{ opacity: 0, y: -8 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.2 }}
+        onClick={() => setPlanExpanded((v) => !v)}
+      >
+        <div
+          className="rounded-xl overflow-hidden"
+          style={{
+            border: "1.5px solid rgba(255,107,43,0.6)",
+            boxShadow: "0 2px 12px rgba(255,107,43,0.25)",
+            background: "rgba(0,0,0,0.45)",
+            backdropFilter: "blur(12px)",
+          }}
+        >
+          {/* Header row */}
+          <div className="flex items-center justify-between px-3 py-1.5">
+            <span
+              className="text-xs font-semibold text-orange-300"
+              style={{
+                fontFamily: "'Noto Sans Devanagari', sans-serif",
+                fontSize: "9px",
+              }}
+            >
+              मारवाड़ी मोबाइल — प्रोजेक्ट प्लान • Project Plan
+            </span>
+            <motion.span
+              className="text-orange-400 text-xs"
+              animate={{ rotate: planExpanded ? 180 : 0 }}
+              transition={{ duration: 0.25 }}
+            >
+              ▼
+            </motion.span>
+          </div>
+          {/* Expandable image */}
+          <AnimatePresence initial={false}>
+            <motion.div
+              key="plan-img"
+              initial={false}
+              animate={{ height: planExpanded ? 160 : 48 }}
+              transition={{ type: "spring", stiffness: 300, damping: 30 }}
+              style={{ overflow: "hidden" }}
+            >
+              <img
+                src="/assets/uploads/1772377339426-1.png"
+                alt="Marwadi Mobile Project Plan"
+                style={{
+                  width: "100%",
+                  height: planExpanded ? "160px" : "48px",
+                  objectFit: planExpanded ? "contain" : "cover",
+                  objectPosition: "top",
+                  display: "block",
+                  background: "#111",
+                  transition: "height 0.3s",
+                }}
+              />
+            </motion.div>
+          </AnimatePresence>
         </div>
       </motion.div>
 
