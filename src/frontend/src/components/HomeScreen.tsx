@@ -1,26 +1,53 @@
-import { AnimatePresence, motion } from "motion/react";
+import { motion } from "motion/react";
 import { useEffect, useState } from "react";
 import type { App } from "../backend.d";
-import { DOCK_APP_IDS } from "../data/apps";
 import { getShortTime } from "../utils/hindi";
-import { AppIcon } from "./AppIcon";
 
 interface HomeScreenProps {
   apps: App[];
   onAppOpen: (app: App) => void;
 }
 
-export function HomeScreen({ apps, onAppOpen }: HomeScreenProps) {
+export function HomeScreen({
+  apps: _apps,
+  onAppOpen: _onAppOpen,
+}: HomeScreenProps) {
   const [now, setNow] = useState(new Date());
-  const [planExpanded, setPlanExpanded] = useState(false);
 
   useEffect(() => {
     const timer = setInterval(() => setNow(new Date()), 1000);
     return () => clearInterval(timer);
   }, []);
 
-  const dockApps = apps.filter((a) => DOCK_APP_IDS.some((id) => id === a.id));
-  const gridApps = apps.filter((a) => !DOCK_APP_IDS.some((id) => id === a.id));
+  const hours = now.getHours();
+  const minutes = now.getMinutes().toString().padStart(2, "0");
+  const ampm = hours >= 12 ? "PM" : "AM";
+  const hour12 = hours % 12 || 12;
+  const days = [
+    "रविवार",
+    "सोमवार",
+    "मंगलवार",
+    "बुधवार",
+    "गुरुवार",
+    "शुक्रवार",
+    "शनिवार",
+  ];
+  const months = [
+    "जनवरी",
+    "फरवरी",
+    "मार्च",
+    "अप्रैल",
+    "मई",
+    "जून",
+    "जुलाई",
+    "अगस्त",
+    "सितंबर",
+    "अक्टूबर",
+    "नवंबर",
+    "दिसंबर",
+  ];
+  const dayName = days[now.getDay()];
+  const dateStr = `${dayName}, ${now.getDate()} ${months[now.getMonth()]}`;
 
   return (
     <motion.div
@@ -37,7 +64,7 @@ export function HomeScreen({ apps, onAppOpen }: HomeScreenProps) {
       transition={{ duration: 0.35 }}
     >
       {/* Dark overlay */}
-      <div className="absolute inset-0 bg-black/20" />
+      <div className="absolute inset-0 bg-black/30" />
 
       {/* Status bar */}
       <div
@@ -84,135 +111,119 @@ export function HomeScreen({ apps, onAppOpen }: HomeScreenProps) {
         </div>
       </motion.div>
 
-      {/* Project Plan Banner */}
+      {/* Center clock */}
       <motion.div
-        className="relative z-10 mx-3 mb-2 cursor-pointer"
-        initial={{ opacity: 0, y: -8 }}
+        className="relative z-10 flex-1 flex flex-col items-center justify-center gap-2"
+        initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.2 }}
-        onClick={() => setPlanExpanded((v) => !v)}
+        transition={{ delay: 0.2, duration: 0.5 }}
       >
+        {/* Big time */}
         <div
-          className="rounded-xl overflow-hidden"
+          className="text-white font-thin"
           style={{
-            border: "1.5px solid rgba(255,107,43,0.6)",
-            boxShadow: "0 2px 12px rgba(255,107,43,0.25)",
-            background: "rgba(0,0,0,0.45)",
-            backdropFilter: "blur(12px)",
+            fontSize: "80px",
+            lineHeight: 1,
+            textShadow: "0 4px 24px rgba(0,0,0,0.6)",
+            fontFamily: "system-ui, sans-serif",
+            letterSpacing: "-2px",
           }}
         >
-          {/* Header row */}
-          <div className="flex items-center justify-between px-3 py-1.5">
-            <span
-              className="text-xs font-semibold text-orange-300"
-              style={{
-                fontFamily: "'Noto Sans Devanagari', sans-serif",
-                fontSize: "9px",
-              }}
-            >
-              मारवाड़ी मोबाइल — प्रोजेक्ट प्लान • Project Plan
-            </span>
-            <motion.span
-              className="text-orange-400 text-xs"
-              animate={{ rotate: planExpanded ? 180 : 0 }}
-              transition={{ duration: 0.25 }}
-            >
-              ▼
-            </motion.span>
-          </div>
-          {/* Expandable image */}
-          <AnimatePresence initial={false}>
-            <motion.div
-              key="plan-img"
-              initial={false}
-              animate={{ height: planExpanded ? 160 : 48 }}
-              transition={{ type: "spring", stiffness: 300, damping: 30 }}
-              style={{ overflow: "hidden" }}
-            >
-              <img
-                src="/assets/uploads/1772377339426-1.png"
-                alt="Marwadi Mobile Project Plan"
-                style={{
-                  width: "100%",
-                  height: planExpanded ? "160px" : "48px",
-                  objectFit: planExpanded ? "contain" : "cover",
-                  objectPosition: "top",
-                  display: "block",
-                  background: "#111",
-                  transition: "height 0.3s",
-                }}
-              />
-            </motion.div>
-          </AnimatePresence>
+          {hour12}:{minutes}
+          <span
+            style={{
+              fontSize: "32px",
+              fontWeight: 300,
+              marginLeft: "6px",
+              opacity: 0.8,
+            }}
+          >
+            {ampm}
+          </span>
         </div>
+
+        {/* Date */}
+        <div
+          className="text-white/80"
+          style={{
+            fontSize: "16px",
+            fontFamily: "'Noto Sans Devanagari', sans-serif",
+            textShadow: "0 2px 8px rgba(0,0,0,0.7)",
+            letterSpacing: "0.02em",
+          }}
+        >
+          {dateStr}
+        </div>
+
+        {/* Marwadi greeting */}
+        <motion.div
+          className="mt-6 px-6 py-3 rounded-2xl text-center"
+          style={{
+            background: "rgba(0,0,0,0.35)",
+            backdropFilter: "blur(16px)",
+            border: "1px solid rgba(255,184,0,0.3)",
+            boxShadow: "0 4px 20px rgba(0,0,0,0.3)",
+          }}
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ delay: 0.4 }}
+        >
+          <div
+            className="text-yellow-200 font-semibold"
+            style={{
+              fontSize: "18px",
+              fontFamily: "'Noto Sans Devanagari', sans-serif",
+              textShadow: "0 2px 8px rgba(0,0,0,0.5)",
+            }}
+          >
+            खम्मा घणी 🙏
+          </div>
+          <div
+            className="text-white/60 mt-1"
+            style={{
+              fontSize: "11px",
+              fontFamily: "'Noto Sans Devanagari', sans-serif",
+            }}
+          >
+            मारवाड़ी UI OS में आपका स्वागत है
+          </div>
+        </motion.div>
+
+        {/* Tricolor accent line */}
+        <div
+          className="mt-8 rounded-full"
+          style={{
+            width: "120px",
+            height: "3px",
+            background: "linear-gradient(90deg, #FF9933, #FFFFFF, #138808)",
+            boxShadow: "0 0 12px rgba(255,153,51,0.5)",
+          }}
+        />
       </motion.div>
 
-      {/* App grid */}
-      <div className="relative z-10 flex-1 overflow-y-auto no-scrollbar px-3 pt-2">
-        <motion.div
-          className="grid gap-y-4 gap-x-2"
-          style={{ gridTemplateColumns: "repeat(4, 1fr)" }}
-          initial="hidden"
-          animate="visible"
-          variants={{
-            hidden: {},
-            visible: {
-              transition: { staggerChildren: 0.04 },
-            },
-          }}
-        >
-          {gridApps.map((app, i) => (
-            <motion.div
-              key={app.id.toString()}
-              className="flex justify-center"
-              variants={{
-                hidden: { opacity: 0, y: 20, scale: 0.8 },
-                visible: { opacity: 1, y: 0, scale: 1 },
-              }}
-              transition={{
-                type: "spring",
-                stiffness: 350,
-                damping: 25,
-                delay: i * 0.04,
-              }}
-            >
-              <AppIcon app={app} onTap={onAppOpen} />
-            </motion.div>
-          ))}
-        </motion.div>
-      </div>
-
-      {/* Bottom dock */}
-      <div className="relative z-10 px-4 pb-4 pt-2">
-        <motion.div
-          className="flex items-center justify-around px-4 py-3 rounded-3xl"
+      {/* Swipe up hint */}
+      <motion.div
+        className="relative z-10 text-center pb-8"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: [0, 1, 0.5, 1] }}
+        transition={{
+          delay: 0.8,
+          duration: 2,
+          repeat: Number.POSITIVE_INFINITY,
+          repeatDelay: 2,
+        }}
+      >
+        <div
+          className="text-white/50"
           style={{
-            background: "rgba(255,255,255,0.18)",
-            backdropFilter: "blur(30px)",
-            WebkitBackdropFilter: "blur(30px)",
-            border: "1px solid rgba(255,255,255,0.3)",
-            boxShadow:
-              "0 8px 32px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.2)",
-          }}
-          initial={{ y: 60, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{
-            delay: 0.3,
-            type: "spring",
-            stiffness: 300,
-            damping: 25,
+            fontSize: "11px",
+            fontFamily: "'Noto Sans Devanagari', sans-serif",
+            letterSpacing: "0.05em",
           }}
         >
-          {dockApps.map((app) => (
-            <AppIcon
-              key={app.id.toString()}
-              app={app}
-              onTap={onAppOpen}
-              size="dock"
-            />
-          ))}
-        </motion.div>
-      </div>
+          ↑ ऊपर स्वाइप करें
+        </div>
+      </motion.div>
 
       {/* Decorative bottom color bar */}
       <div
